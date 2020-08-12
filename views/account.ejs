@@ -1,5 +1,5 @@
 <%- include('partials/header'); %> 
-<div id="Login">
+<div id="Register">
   <div class="container-fluid">
     <div class="row">
       <div id="sidebar" class="col-md-2">
@@ -9,16 +9,16 @@
         <h2><img class="pb-2" src="https://via.placeholder.com/150" alt=""></h2>
       </div>  
       <main role="main" class="col-md-10">
-        <h1>Login</h1>
+        <h1>Account</h1>
         
         
         <div class="message">
-          <form action="/login" method="post">
-            <input type="email" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit">Login</button>
-            <a class="nav-link" href="/register"></i>register</a>
-          </form>
+            <form action="/account" method="post">
+                <input type="text" name="displayNmae" placeholder="My name">
+                <input type="email" name="email" placeholder="Email">
+                <input type="file" name="avatar">
+              <button type="submit">Update</button>
+            </form>
         </div>
       </main>
     </div> <!-- end .row --> 
