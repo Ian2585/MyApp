@@ -1,4 +1,5 @@
-<%- include('partials/header'); %> <%- include('partials/nav'); %> 
+<%- include('partials/header'); %> 
+<%- include('partials/nav'); %> 
 <div id="main">
   <div class="container-fluid">
     <div class="row">
@@ -14,19 +15,27 @@
           <p><input class="form-control form-control-lg" type="text" placeholder="Type to send messages"></p>
         </div>
         <h2>Login</h2>
+        <% if (locals.errors && locals.errors.login) { %>
+          <% locals.errors.login.forEach(function(error) { %>
+            <p class="alert alert-primary" role="alert"><%= error %></p>
+          <% }) %>
+        <% } %>
         <form action="/login" method="post">
-          <input type="email" name="email" placeholder="Email">
-          <input type="password" name="password" placeholder="Password">
-          <button type="submit">Login</button>
-        </form>
+
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
           
-        <h2>Register</h2>
-        <form action="/register" method="post">
-          <input type="email" name="email" placeholder="Email">
-          <input type="password" name="password" placeholder="Password">
-          <input type="password" name="passwordConfirm" placeholder="Confirm Password">
-          <button type="submit">Register</button>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          </div>
+        
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <a class="nav-link" href="/register"></i>register</a>
         </form>
+      </div>
+
         <div class="message">
           <p>Integer turpis elit, venenatis et justo ac, finibus vestibulum urna. Sed et orci eu ligula lacinia suscipit nec nec nulla. Ut sed ligula urna. Aenean sagittis augue ac diam rutrum molestie. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce pretium nulla a sem viverra, interdum luctus massa rutrum. Aliquam tincidunt gravida quam. Ut tellus dolor, interdum eu sapien nec, placerat viverra libero.</p>
         </div>
