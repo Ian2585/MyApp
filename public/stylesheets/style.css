@@ -5,3 +5,14 @@ body {
   color: #fff;
  width: 100%;
 }
+.userimage{
+  width: 20%;
+}
+.userimage img{
+  width: 100%;
+  height: auto;
+  padding-top: 2%;
+  border-style: solid;
+  border-color: #fff;
+
+}
