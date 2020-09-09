@@ -11,54 +11,44 @@
 class UserController{
 
     /**
-     * Instantiates class, calls method to set required session variables 
-     * for the user and assigns middleware to routes
+     * Instantiates class, calls method to set 
+     * required session variables 
+     * for the user
      */
     constructor(){
-
         // Set current user variables before each request
         this.setVariables();
+    }
 
+    /**
+     * Assigns middleware to add User to
+     * UserModel, request.session, 
+     * and response.locals variables
+     */
+    setVariables(){
+        AraDTApp.use(async (request, response, next) => {
+            // Pass on to next middleware
+            next();
+        });
+    }
+        
+    /**
+     * Assigns middleware to routes
+     */
+    addRoutes(){
         // Add all routing middleware for user endpoints
         AraDTApp.get('/register', this.signup);
         AraDTApp.post('/register', this.register);
         AraDTApp.post('/login', this.login);
         AraDTApp.get('/logout', this.logout);
         AraDTApp.get('/account', this.getAccount);
-        AraDTApp.get('/contact', this.getContact);
-        AraDTApp.get('/login', this.getlogin);
         AraDTApp.post('/account', this.updateAccount);
         AraDTApp.post('/password', this.updatePassword);
     }
 
-    
-    signup(request, response, next) {
+    signup = async (request, response) => {
         response.render('register');
-    }
-
-    /**
-     * Assigns middleware to add Firebase.auth().currentUser to
-     * UserModel, request.session, and response.locals variables
-     */
-    setVariables(){
-        AraDTApp.use(async function(request, response, next) {
-            // Chesk if user logged in for this session
-            if (request.session.token) {
-                // We have a logged in user, so request user from Firebase
-                var currentUser = await AraDTDatabase.firebase.auth().currentUser;
-                if (currentUser != null) {
-                    // User returned, so add to session and local variables
-                    request.session.user = currentUser;
-                    response.locals.user = request.session.user;
-                    AraDTUserModel.setUser(currentUser);
-                    response.locals.loggedin = true;
-                    response.locals.user = currentUser;
-                }
-            }
-            // Pass on to next middleware
-            next();
-        });
-    }
+    };
 
     /**
      * Asynchronous function that handles post form submission to '/login'
@@ -89,14 +79,6 @@ class UserController{
             response.redirect('/');
         }
     };
-
-    getAccount(request, response, next) {
-        
-        if (!request.session.token) {
-            response.redirect('/');
-        }
-        response.render('contact');
-    }
 
 
     /**
@@ -130,72 +112,27 @@ class UserController{
         }
     };
 
-    getContact(request, response, next) {
-        response.render('contact');
-    }
-    getlogin(request, response, next) {
-        response.render('login');
-    }
-
     /* YOU NEED TO ADD COMMENTS FROM HERE ON */
 
     updateAccount =  async (request, response) => {
-// Try to see if form submission is valid
-        var currentUser = AraDTUserModel.getCurrentUser();
-        if (currentUser) {
-            try{
-                await AraDTUserModel.update(request, response)
-                    .then(() => {
-                        // update account successful, so redirect to account
-                        response.locals.errors.profile = ['Your details have been updated'];
-                        response.render('account');
-                    }).catch((error) => {
-                        // Firebase account update has failed, so return Firebase errors
-                        response.locals.errors.profile = [error.message];
-                        response.render('account');
-                    });
-            } catch(errors) {
-                // Form has failed validation, so return errors
-                response.locals.errors.profile = errors;
-                response.render('account');
-            }
-        } else {
-            this.logout(request, response);
-            // if doesn't work logs out
-        }
 
-    };
-    
-    updatePassword = async (request, response) => {
-        // Try to see if form submission is valid
-
-        var currentUser = AraDTUserModel.getCurrentUser();
-        if (currentUser) {
-            try{
-                await AraDTUserModel.updatePassword(request, response)
-                    .then(() => {
-                        // update password successful, so redirect to account
-                        response.locals.errors.password = ['Your password has been updated'];
-                        response.render('account');
-                    }).catch((error) => {
-                        // Firebase account update has failed, so return Firebase errors
-                        response.locals.errors.password = [error.message];
-                        response.render('account');
-                    });
-            } catch(errors) {
-                // Form has failed validation, so return errors
-                response.locals.errors.password = errors;
-                response.render('account');
-            }
-        } else {
-            // if doesn't work logs out
-            this.logout(request, response);
+        try{
+            await AraDTUserModel.update(request, response)
+                .then(() => {
+                    response.locals.errors.profile = ['Your details have been updated'];
+                    response.render('account');
+                }).catch((error) => {
+                    response.locals.errors.profile = [error.message];
+                    response.render('account');
+                });
+        } catch(errors) {
+            response.locals.errors.profile = errors;
+            response.render('account');
         }
 
     };
 
     getAccount(request, response){
-        // Try to see if form submission is valid
         
         if (!request.session.token) {
             response.redirect('/');
@@ -210,10 +147,41 @@ class UserController{
         await AraDTDatabase.firebase.auth().signOut().then(function() {
                 response.redirect('/');
             }).catch(function(error) {
-                // Form has failed validation, so return errors
                 response.redirect('/');
             });
     }
+
+    /**
+     * Asynchronous function that handles POST form submission to '/password'
+     * On success, redirects to '/account'
+     * Onfailure, redirects to '/account' with error message
+     * Requires the following POST form name fields:
+     * 
+     * @param {string}      request.body.password           password form field
+     * @param {string}      request.body.passwordConfirm    passwordConfirm form field
+     * 
+     * @returns {Object}    response.redirect object
+     */
+    updatePassword = async (request, response) => {
+
+        try{
+            await AraDTUserModel.updatePassword(request, response)
+                .then(() => {
+                    // updated password successful, so redirects to account
+                    request.session.errors.password = ['Your password has been updated'];
+                    response.redirect('/account');
+                }).catch((error) => {
+                    // updated password not succesfful, so keeps user on account and displays error
+                    request.session.errors.password = [error.message];
+                    response.redirect('/account');
+                });
+        } catch(errors) {
+            // Form has failed validation, so returns errors
+            request.session.errors.password = errors;
+            response.redirect('/account');
+        }
+
+    };
 
 }
 module.exports = UserController;
