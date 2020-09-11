@@ -4,6 +4,10 @@
 <form id="channel-create-form" action="/channels/add" method="post" enctype="multipart/form-data">
 	<input type="text" class="form-control" name="name" placeholder="Display Name" value="">
 	<input type="file" class="custom-file-input" name="avatar" id="avatar-upload">
+	<div class="custom-file">
+		<input type="file" name="avatar" class="custom-file-input" id="customFile">
+		<label class="custom-file-label" for="customFile">Choose file</label>
+	  </div>
 	<% if (users) { %>
 		<% users.forEach(function(user) { %>
 			<input class="user-check-input" id="user<%= user.id %>" type="checkbox" name="users" value="<%= user.id %>">
@@ -23,7 +27,7 @@ var subscribed = ("subscribed" in  channels) ? channels.subscribed : false
 	<ul>
 	<% owned.forEach(function(channel) { %>
 		<li>
-			<img src="<%= channel.image %>" alt="<%= channel.name %>">
+			<img class="gay" src="<%= channel.image %>" alt="<%= channel.name %>">
 			<a href="/channel/<%= channel.id %>/"><%= channel.name %></a>
 			<a href="/channels/delete/<%= channel.id %>/"><i class="fa fa-trash" aria-hidden="true"></i></a>
 		</li>
@@ -38,7 +42,7 @@ var subscribed = ("subscribed" in  channels) ? channels.subscribed : false
 	<% subscribed.forEach(function(channel) { %>
 		<li>
 			<img src="<%= channel.image %>" alt="<%= channel.name %>">
-			<a href="/channel/<%= channel.slug %>/"><%= channel.name %></a>	
+			<a href="/channel/<%= channel.id %>/"><%= channel.name %></a>	
 		</li>
 	<% }) %>
 	</ul>
