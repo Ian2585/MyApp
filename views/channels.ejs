@@ -27,7 +27,7 @@ var subscribed = ("subscribed" in  channels) ? channels.subscribed : false
 	<ul>
 	<% owned.forEach(function(channel) { %>
 		<li>
-			<img class="gay" src="<%= channel.image %>" alt="<%= channel.name %>">
+			<img class="subscribed-image" src="<%= channel.image %>" alt="<%= channel.name %>">
 			<a href="/channel/<%= channel.id %>/"><%= channel.name %></a>
 			<a href="/channels/delete/<%= channel.id %>/"><i class="fa fa-trash" aria-hidden="true"></i></a>
 		</li>
@@ -41,7 +41,7 @@ var subscribed = ("subscribed" in  channels) ? channels.subscribed : false
 	<ul>
 	<% subscribed.forEach(function(channel) { %>
 		<li>
-			<img src="<%= channel.image %>" alt="<%= channel.name %>">
+			<img src="<%= channel.image %>" alt="<%= channel.name %>" class="subscribed-image">
 			<a href="/channel/<%= channel.id %>/"><%= channel.name %></a>	
 		</li>
 	<% }) %>
